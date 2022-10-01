@@ -10,15 +10,26 @@ leds = NP(6,28)
 i2c = machine.I2C(0, sda=machine.Pin(0), scl=machine.Pin(1))
 tof = vl53l1x.VL53L1X(i2c)
 
+counter = 0
+
 while True:
     distance = tof.read()
-    print(distance)
-    if distance > 1000:
+    if distance > 3000:
         leds.clear()
-    elif distance > 500:
+        counter = 0
+    elif distance > 1150:
+        counter = 0
         leds.set_hls_color(0.33333,0.5,1.0)
-    elif distance > 250:
+    elif distance > 750:
+        counter = 0
         leds.set_hls_color(0.15,0.5,1.0)
+    elif distance > 550:
+        counter = 0
+        leds.set_hls_color(0.08333,0.5,1.0)
     else:
-        leds.set_hls_color(0.0,0.5,1.0)
+        counter += 1
+        if counter < 30:
+            leds.set_hls_color(0.0,0.5,1.0)
+        else:
+            leds.clear()
     time.sleep(1)
